@@ -1,0 +1,12 @@
+#!/bin/sh
+set -eu
+install -d /usr/local/lib/deaddrop /etc/sysctl.d /etc/systemd/system /usr/local/bin /etc/systemd/journald.conf.d
+chmod +x /usr/local/lib/deaddrop/firewall.sh /usr/local/bin/wait-for-tor /usr/local/bin/deaddrop-client /usr/local/bin/deaddrop-panic 2>/dev/null || true
+# Enable services by symlink so the hook works inside live-build chroots where systemctl may be inert.
+install -d /etc/systemd/system/network-pre.target.wants /etc/systemd/system/multi-user.target.wants
+ln -sf ../deaddrop-firewall.service /etc/systemd/system/network-pre.target.wants/deaddrop-firewall.service
+ln -sf ../deaddrop-panic.service /etc/systemd/system/multi-user.target.wants/deaddrop-panic.service
+ln -sf ../deaddrop-tui.service /etc/systemd/system/multi-user.target.wants/deaddrop-tui.service
+ln -sf ../deaddrop-e2e.service /etc/systemd/system/multi-user.target.wants/deaddrop-e2e.service
+# Ensure swap is not activated in the live system.
+systemctl mask swap.target 2>/dev/null || ln -sf /dev/null /etc/systemd/system/swap.target

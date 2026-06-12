@@ -1,0 +1,12 @@
+[Unit]
+Description=DEADDROP-OS guest E2E security test hook
+ConditionKernelCommandLine=deaddrop.e2e=1
+After=deaddrop-tui.service deaddrop-panic.service tor.service
+Requires=deaddrop-panic.service tor.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/deaddrop-e2e-guest
+
+[Install]
+WantedBy=multi-user.target

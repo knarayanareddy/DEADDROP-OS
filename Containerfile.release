@@ -1,0 +1,13 @@
+# DEADDROP-OS reproducible release builder
+# Build with: podman build -f Containerfile.release -t deaddrop-release .
+# Run with:   podman run --rm -v "$PWD:/src" -w /src deaddrop-release ./tools/release-check.sh
+FROM debian:12-slim
+ARG GO_VERSION=1.25.11
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ca-certificates curl gcc libc6-dev make python3 git sqlite3 live-build qemu-system-x86 tcpdump \
+    && rm -rf /var/lib/apt/lists/*
+RUN curl -fsSL "https://go.dev/dl/go${GO_VERSION}.linux-amd64.tar.gz" -o /tmp/go.tgz \
+    && tar -C /usr/local -xzf /tmp/go.tgz \
+    && rm /tmp/go.tgz
+ENV PATH="/usr/local/go/bin:/root/go/bin:${PATH}"
+RUN go install golang.org/x/vuln/cmd/govulncheck@latest

@@ -1,0 +1,10 @@
+artifacts/
+*.db
+*.db-shm
+*.db-wal
+*.iso
+*.sha256
+.cache/
+.config/
+go/
+iso-work/

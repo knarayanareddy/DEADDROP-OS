@@ -1,0 +1,21 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with: { go-version: '1.25.11' }
+      - run: ./tools/check-go-version.sh
+      - run: go test ./...
+      - run: go vet ./...
+      - run: go build ./cmd/deaddrop-server ./cmd/deaddrop-client ./cmd/deaddrop-panic
+      - run: python3 tests/security/check_static_invariants.py
+      - run: go install golang.org/x/vuln/cmd/govulncheck@latest
+      - run: govulncheck ./...
+      - run: ./tools/build-binaries.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deaddrop-binaries
+          path: artifacts/

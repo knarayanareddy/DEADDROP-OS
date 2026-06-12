@@ -1,0 +1,24 @@
+#!/bin/sh
+# Runs inside the live ISO when kernel cmdline contains deaddrop.e2e=1.
+set -eu
+CMDLINE=$(cat /proc/cmdline)
+echo "$CMDLINE" | grep -q 'deaddrop.e2e=1' || exit 0
+URL=$(printf '%s\n' "$CMDLINE" | tr ' ' '\n' | sed -n 's/^deaddrop.e2e_url=//p' | head -1)
+LOG=/run/deaddrop/e2e.log
+mkdir -p /run/deaddrop
+exec > "$LOG" 2>&1
+echo "DEADDROP E2E guest test starting"
+/usr/local/bin/wait-for-tor || exit 10
+sysctl net.ipv6.conf.all.disable_ipv6 | grep -q '= 1' || exit 11
+iptables -S OUTPUT | grep -q '^-P OUTPUT DROP' || exit 12
+ip6tables -S OUTPUT | grep -q '^-P OUTPUT DROP' || exit 13
+if [ -n "$URL" ]; then
+  DEADDROP_SERVER="$URL" /usr/local/bin/deaddrop-client -self-test -server "$URL" -key-dir /run/user/1000/deaddrop-e2e -activity-socket /run/deaddrop/activity.sock || exit 20
+else
+  echo "No deaddrop.e2e_url provided; skipped submit/retrieve client lifecycle"
+fi
+systemctl kill -s USR1 deaddrop-panic.service || true
+sleep 2
+[ ! -e /run/user/1000/deaddrop-e2e/private.pem ] || exit 30
+echo "DEADDROP E2E guest test passed"
+systemctl poweroff || true

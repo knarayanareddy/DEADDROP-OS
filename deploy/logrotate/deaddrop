@@ -1,0 +1,21 @@
+/var/log/deaddrop/access.log {
+    daily
+    rotate 7
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+    create 0640 deaddrop adm
+}
+
+/var/log/deaddrop/error.log /var/log/deaddrop/vacuum.log {
+    daily
+    rotate 30
+    missingok
+    notifempty
+    compress
+    delaycompress
+    copytruncate
+    create 0640 deaddrop adm
+}

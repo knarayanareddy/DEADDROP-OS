@@ -1,0 +1,23 @@
+[Unit]
+Description=DEADDROP-OS onion-only backend
+After=tor.service
+Requires=tor.service
+
+[Service]
+User=deaddrop
+Group=deaddrop
+Environment=DEADDROP_LISTEN=127.0.0.1:8080
+Environment=DEADDROP_DB=/var/lib/deaddrop/drops.db
+ExecStartPre=/usr/local/bin/wait-for-tor
+ExecStart=/usr/local/bin/deaddrop-server
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/var/lib/deaddrop /var/log/deaddrop
+StandardOutput=append:/var/log/deaddrop/access.log
+StandardError=append:/var/log/deaddrop/error.log
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target

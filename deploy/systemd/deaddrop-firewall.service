@@ -1,0 +1,14 @@
+[Unit]
+Description=DEADDROP-OS firewall enforcement (Tor-only, default drop)
+DefaultDependencies=no
+Before=network-pre.target
+Wants=network-pre.target
+ConditionPathExists=/usr/local/lib/deaddrop/firewall.sh
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/lib/deaddrop/firewall.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=network-pre.target

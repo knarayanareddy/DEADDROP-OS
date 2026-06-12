@@ -1,0 +1,3 @@
+# TTL expiry is owned by the Go backend's in-process maintenance loop.
+# Cron performs only WAL checkpoint + VACUUM to keep storage compact.
+0 3 * * * deaddrop /usr/local/bin/deaddrop-vacuum >> /var/log/deaddrop/vacuum.log 2>&1

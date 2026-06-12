@@ -1,0 +1,17 @@
+[Unit]
+Description=DEADDROP-OS TUI messenger
+After=tor.service
+Requires=tor.service
+
+[Service]
+Type=simple
+User=user
+Environment=DEADDROP_KEY_DIR=/run/user/1000/deaddrop
+ExecStartPre=/usr/local/bin/wait-for-tor
+ExecStart=/usr/local/bin/deaddrop-client
+StandardInput=tty
+TTYPath=/dev/tty1
+Restart=no
+
+[Install]
+WantedBy=multi-user.target

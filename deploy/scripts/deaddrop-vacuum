@@ -1,0 +1,5 @@
+#!/bin/sh
+set -eu
+DB=${DEADDROP_DB:-/var/lib/deaddrop/drops.db}
+sqlite3 "$DB" "PRAGMA wal_checkpoint(TRUNCATE);"
+sqlite3 "$DB" "VACUUM;"

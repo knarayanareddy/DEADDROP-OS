@@ -1,0 +1,14 @@
+[Unit]
+Description=DEADDROP-OS panic wipe daemon
+After=basic.target
+
+[Service]
+Type=simple
+RuntimeDirectory=deaddrop
+RuntimeDirectoryMode=0700
+ExecStart=/usr/local/bin/deaddrop-panic -paths /run/user/1000/deaddrop,/tmp/deaddrop -inactivity 30m -activity-socket /run/deaddrop/activity.sock
+Restart=on-failure
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target

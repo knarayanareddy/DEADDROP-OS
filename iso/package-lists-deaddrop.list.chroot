@@ -1,0 +1,10 @@
+tor
+iptables
+sqlite3
+ca-certificates
+curl
+less
+systemd-sysv
+procps
+iproute2
+kbd

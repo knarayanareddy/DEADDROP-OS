@@ -1,0 +1,11 @@
+#!/bin/sh
+set -eu
+LOG=${1:-/run/tor/tor.log}
+END=$(( $(date +%s) + 120 ))
+while [ "$(date +%s)" -lt "$END" ]; do
+  if [ -f "$LOG" ] && grep -q "Bootstrapped 100%" "$LOG"; then exit 0; fi
+  if command -v ss >/dev/null 2>&1 && ss -ltn | grep -q ':9050 '; then exit 0; fi
+  sleep 2
+done
+echo "Tor bootstrap did not complete within 120 seconds" >&2
+exit 1
